@@ -140,16 +140,22 @@ short_prompt() {
     GIT_PROMPT=`echo $(__git_ps1)`
     
     if [[ ${BRANCH_NAME:1:7} == "feature" ]]; then
-        GIT_PROMPT="(${BRANCH_NAME:1:4}|${BRANCH_NAME:9:7}"
+        GIT_PROMPT=" (f|${BRANCH_NAME:9:7}"
         
-	if [[ ${BRANCH_NAME:(-2):1} == "*" ]]; then
-	    GIT_PROMPT+=" *)"     	
-	else
-	    GIT_PROMPT+=")"
+	    if [[ ${BRANCH_NAME:(-2):1} == "*" ]]; then
+	        GIT_PROMPT+=" *)"     	
+	    else
+	        GIT_PROMPT+=") "
         fi	
+
+        echo -e "$GIT_PROMPT"
+
+    elif [[ $BRANCH_NAME == "" ]]; then
+        echo -e " "
+    else
+        echo -e " $BRANCH_NAME "
     fi
 
-    echo -e "$GIT_PROMPT"
 
 }
 
@@ -158,7 +164,7 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 # '\$(__git_ps1)' adds git-related stuff
 # '\W' adds the name of the current directory
 #export PS1="$cyan\u$green\$(__git_ps1)$lgray \W $ $reset"
-export PS1="$cyan\u$green\$(short_prompt)$lgray \W $ $reset"
+export PS1="$cyan\u$green\$(short_prompt)$lgray\W$ $reset"
 
 # added by Anaconda3 installer
 export PATH="/home/carlos/anaconda3/bin:$PATH"
