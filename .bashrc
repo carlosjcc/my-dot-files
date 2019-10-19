@@ -138,17 +138,20 @@ short_prompt() {
     
     BRANCH_NAME=`echo $(__git_ps1)`
     GIT_PROMPT=`echo $(__git_ps1)`
-    
+ 
     if [[ ${BRANCH_NAME:1:7} == "feature" ]]; then
         GIT_PROMPT=" (f|${BRANCH_NAME:9:7}"
-        
+
 	    if [[ ${BRANCH_NAME:(-3):2} == "*+" ]]; then
 	        GIT_PROMPT+=" *+) "     	
-        
+
         elif [[ ${BRANCH_NAME:(-2):1} == "*" ]]; then
 	        GIT_PROMPT+=" *) "     	
 
-	    else
+        elif [[ ${BRANCH_NAME:(-2):1} == "+" ]]; then
+	        GIT_PROMPT+=" +) "
+
+        else
 	        GIT_PROMPT+=") "
         fi	
 
@@ -156,6 +159,7 @@ short_prompt() {
 
     elif [[ $BRANCH_NAME == "" ]]; then
         echo -e " "
+
     else
         echo -e " $BRANCH_NAME "
     fi
