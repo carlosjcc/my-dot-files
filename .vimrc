@@ -90,8 +90,10 @@ nnoremap <Leader>f :NERDTreeToggle<Enter>
 set laststatus=2 " always display powerline
 
 " colorscheme
-colorscheme default
+colorscheme edge
+set background=dark
 
+filetype indent on
 " netrw
 "let g:netrw_liststyle = 3 " tree view for directory browser
 "let g:netrw_browse_split = 4 " open in previous window
@@ -102,3 +104,22 @@ colorscheme default
 "    autocmd!
 "    autocmd VimEnter * :Vexplore
 "augroup END
+set whichwrap+=<,>,h,l
+
+
+set expandtab
+
+" Be smart when using tabs ;)
+set smarttab
+
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4
+
+" Linebreak on 500 characters
+set lbr
+set tw=500
+
+set ai "Auto indent
+set si "Smart indent
+set wrap "Wrap lines

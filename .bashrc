@@ -18,6 +18,7 @@ shopt -s histappend
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=1000
 HISTFILESIZE=2000
+#export HISTTIMEFORMAT="%d.%m.%y %T "
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -116,6 +117,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# completion files
+source ~/tmux-completion.bash
+source ~/git-completion.bash
 
 # Enable tab completion
 #source ~/git-completion.bash
@@ -171,8 +175,8 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 # '\u' adds the name of the current user to the prompt
 # '\$(__git_ps1)' adds git-related stuff
 # '\W' adds the name of the current directory
-#export PS1="$cyan\u$green\$(__git_ps1)$lgray \W $ $reset"
-export PS1="$cyan\u$green\$(short_prompt)$lgray\W $ $reset"
+export PS1="$cyan\u$green\$(__git_ps1)$lgray \W $ $reset"
+#export PS1="$cyan\u$green\$(short_prompt)$lgray\W $ $reset"
 
 # added by Anaconda3 installer
 export PATH="/home/carlos/anaconda3/bin:$PATH"
