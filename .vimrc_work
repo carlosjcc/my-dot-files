@@ -37,6 +37,8 @@ Plugin 'garbas/vim-snipmate'
 Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plugin 'junegunn/fzf.vim'
 
+Plugin 'christoomey/vim-tmux-navigator'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -52,7 +54,7 @@ set rtp+=/usr/local/opt/fzf
 
 " fzf
 " Use ag to obey ignore files
-let $FZF_DEFAULT_COMMAND='ag --ignore "*.log" --ignore ".git" --hidden -g ""'
+let $FZF_DEFAULT_COMMAND='ag --ignore "*tags*" --ignore "*.log" --ignore ".git" --hidden -g ""'
 let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-x': 'split',
@@ -66,6 +68,9 @@ set diffopt+=vertical
 set nowrap
 set encoding=utf-8
 set mouse=a                        " Enable mouse everywhere. 
+set redrawtime=10000
+let mapleader=","
+set shiftwidth=4
 
 " python syntax highlighting
 let python_highlight_all=1
@@ -86,11 +91,20 @@ set wildmode=longest:list,full
 set splitright
 nmap <leader>d :bprevious<CR>:bdelete #<CR> " delete current buffer without closing the window
 
+" panes navigation
 set ttymouse=xterm2    " enable draggin splits in tmux
 map <C-h> <C-w>h
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
+
+let g:tmux_navigator_no_mappings = 1
+nnoremap <silent> <c-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
+"nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
+"nnoremap <silent> <c-h> :TmuxNavigatePrevious<cr>
+
 
 " scrolling
 nnoremap <C-e> 3<C-e>
@@ -102,6 +116,9 @@ nnoremap zh 4zh
 
 " search settings
 set incsearch
+set hlsearch
+nmap <silent> ,/ :nohlsearch<CR> " clears the highlight search
+
 " set nowrapscan " the problem is if the result of the search is above the cursor it does not find it
 " search for visually selected text
 vnoremap // y/\V<C-r>=escape(@",'/\')<CR><CR> 
@@ -126,12 +143,11 @@ au BufNewFile,BufRead *.py
     \ set smarttab |
     \ set colorcolumn=79
 
+autocmd Filetype yaml set expandtab
+autocmd Filetype yaml set shiftwidth=2
 
 "remap ESC
 inoremap jj <ESC>
-
-
-
 
 " colorscheme and to counter tmux color settings
 set t_Co=256 " ALL OTHER COLOR SETTINGS SHOULD BE SET AFTER THIS SETTING
@@ -161,3 +177,5 @@ set undodir=/Users/carlos/.vimundo
 
 " vimdiff
 
+" yanking
+nmap <leader>y <S-^>v<S-$>hy
