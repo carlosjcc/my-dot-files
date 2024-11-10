@@ -11,6 +11,10 @@ blue="\[\033[0;34m\]"
 green="\[\033[0;32m\]" 
 gray="\[\e[38;5;8m\]"
 
+pyenv deactivate
+
+export USER=carlos
+export LOGNAME=carlos
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -36,6 +40,7 @@ export LESS="-XRFS"
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/local/bin/gdircolors ]; then
+
 	test -r ~/.gdircolors && eval "$(gdircolors -b ~/.gdircolors)" || eval "$(gdircolors -b)"
 
 	# https://www.cyberciti.biz/faq/apple-mac-osx-terminal-color-ls-output-option/ 
@@ -64,53 +69,41 @@ if [ -x /usr/local/bin/gdircolors ]; then
 	alias vrc='vim ~/.vimrc'
 	alias bap='vim ~/.bash_profile'
 
+	# ptpython
+
+	# ctags
+	#mw
+	alias ctagsmw='ctags -R . ~/.pyenv/versions/mw/site-packages/'
+
+	#prov
+	# ctags -R ~/.pyenv/versions/2.7.16/envs/prov/lib/python2.7/site-packages/
+	alias ctagsprov='ctags -R . ~/.pyenv/versions/prov/lib/python2.7/site-packages'
+
 	# middleware aliases
+	source ~/.mw-aliases.sh
 
-	alias redis='redis-cli'
-	alias redispp='redis-cli -h 10.60.81.161 -p 6380'
-	alias j='jobs -l'
-	alias km="jobs -p | xargs kill"
-	# alias km='jpkill -f \"python server\"'
-	alias bp='vim ~/.pdbrc'
-	alias mwd='PYTHONPATH="../lib" python server.py'
-	alias mw='PYTHONPATH="../lib" python server.py  --debug --capture_request_context >> >(tee -a ~/projects/mw2/logs/stdout.log) 2>> >(tee -a ~/projects/mw2/logs/stderr.log >&2)'
-	alias pro='python manage.py runserver 0.0.0.0:8000'
-	alias redis-pre='redis-cli -h 10.80.72.20 -p 6380'
-	alias contp='python manage.py continuous_provisioning editorial_item_lists editorial_mapping_lists households isps plans releases vod_price_rules vod_titles titles ratings settings packages entitlements images:3 applications image_presets:3 object_store_images:3 object_store_image_presets:3 channels actionable_virtual_channels content_classes request_image_provisioning provision_image_maps_to_redis item_list_provisioning_request prepared_items curated_content_lists'
-	alias proterm='cd ~/projects/provisioning/provisioning && pyenv activate prov && source ~/.bash_profile && clear'
-	alias mwterm='cd ~/projects/mw2/middle/ && pyenv activate mw && source ~/.bash_profile && clear'
-	alias sterm='cd ~/projects/search_server && pyenv activate search && source ~/.bash_profile && clear'
-	alias pptunnel='ssh -L 9000:preprod.rds.fetchtv.com.au:3306 sv425-mwpp1.eq.i.fetchtv.com.au'
-
-	# calls
-	alias c='curl -b cookies.txt  --header "X-FTV-Capabilties: stb-GEN3,v.development,stb,vod_purchase,vod_rent,season_pass,virtual_channel,EST_OLS,special_price,free_pack,plan_subsets,skinny_epg,fta_catchup,off_air_catchup,actionable_virtual_channel,hlsonly,HEVC,ac3" 127.0.0.1:12121/v4/epg/reverse_catchup | python -m json.tool'
-	alias rod='curl -b cookies.txt  --header "X-FTV-Capabilties: stb-GEN3,v.development,stb,vod_purchase,vod_rent,season_pass,virtual_channel,EST_OLS,special_price,free_pack,plan_subsets,skinny_epg,fta_catchup,off_air_catchup,actionable_virtual_channel,hlsonly,HEVC,ac3" 127.0.0.1:12121/v4/epg/channels | python -m json.tool'
-
-	alias pauth='curl -c pcookies.txt -H "User-Agent: Takin/3.0.0 (Linux arm ; U; en), STB/2.8.115 Version/11.10, GFiber_STB_GC4155/2.22 (FETCHTV, M605T, Wired)" --header "X-FTV-Capabilties: stb-Gen3,v.development,stb,vod_purchase,vod_rent,season_pass,virtual_channel,EST_OLS,special_price,free_pack,plan_subsets,skinny_epg,fta_catchup,off_air_catchup,actionable_virtual_channel,hlsonly,HEVC,ac3,4K" --data "auth_id=0C:56:5C:6D:9C:4A&auth_token=5pgduuszkx" https://apis.fetchtv.com.au/v2/authenticate | python -m json.tool | less'
-	alias ppauth='curl -c ppcookies.txt -H "User-Agent: Takin/3.0.0 (Linux arm ; U; en), STB/2.8.115 Version/11.10, GFiber_STB_GC4155/2.22 (FETCHTV, M605T, Wired)" --header "X-FTV-Capabilties: stb-Gen3,v.development,stb,vod_purchase,vod_rent,season_pass,virtual_channel,EST_OLS,special_price,free_pack,plan_subsets,skinny_epg,fta_catchup,off_air_catchup,actionable_virtual_channel,hlsonly,HEVC,ac3,4K" --data "auth_id=0C:56:5C:6D:9C:4A&auth_token=5pgduuszkx" http://10.65.72.121:12121/v2/authenticate | python -m json.tool | less'
-	alias lauth='curl -c cookies.txt -H "User-Agent: Takin/3.0.0 (Linux arm ; U; en), STB/2.8.115 Version/11.10, GFiber_STB_GC4155/2.22 (FETCHTV, M605T, Wired)" --header "X-FTV-Capabilties: stb-GEN3,v.development,stb,vod_purchase,vod_rent,season_pass,virtual_channel,EST_OLS,special_price,free_pack,plan_subsets,skinny_epg,fta_catchup,off_air_catchup,actionable_virtual_channel,hlsonly,HEVC,ac3,4K" --data "auth_id=0C:56:5C:6D:9C:4A&auth_token=5pgduuszkx" 127.0.0.1:12121/v2/authenticate | python -m json.tool | less'
 
 fi
 
-capabilities="stb-Gen3,3.10,stb,vod_purchase,vod_rent,season_pass,virtual_channel,EST_OLS,special_price,free_pack,plan_subsets,skinny_epg,fta_catchup,off_air_catchup,actionable_virtual_channel,team_tags_v2,apps_flat_list,ui3,hlsonly,HEVC,ac3,staff,karen"
-user_agent="Takin/3.0.0 (Linux arm ; U; en), STB/2.8.115 Version/11.10, GFiber_STB_GC4155/2.22 (FETCHTV, M605T, Wired)"
+# capabilities="stb-Gen3,3.10,stb,vod_purchase,vod_rent,season_pass,virtual_channel,EST_OLS,special_price,free_pack,plan_subsets,skinny_epg,fta_catchup,off_air_catchup,actionable_virtual_channel,team_tags_v2,apps_flat_list,ui3,hlsonly,HEVC,ac3,staff,karen"
+# user_agent="Takin/3.0.0 (Linux arm ; U; en), STB/2.8.115 Version/11.10, GFiber_STB_GC4155/2.22 (FETCHTV, M605T, Wired)"
 
 # mw functions
-mw_get() {
+# mw_get() {
 
-    if [ $1 = 'l' ]; then
-        cookies="cookies.txt"
-    elif [ $1 = 'pp']; then
-        cookies="ppcookies.txt"
-    elif  [ $1 = 'p']; then
-        cookies="pcookies.txt"
-    else
-        echo "choose whether l, pp, p for cookies"
-    fi
+#     if [ $1 = 'l' ]; then
+#         cookies="cookies.txt"
+#     elif [ $1 = 'pp']; then
+#         cookies="ppcookies.txt"
+#     elif  [ $1 = 'p']; then
+#         cookies="pcookies.txt"
+#     else
+#         echo "choose whether l, pp, p for cookies"
+#     fi
 
-    curl -b "$cookies" -H "$user_agent" -H "$capabilities" sv922-mwp11.eq.i.fetchtv.com.au:12121/v4/search --data "words=war&scope=All&count=100"
+#     curl -b "$cookies" -H "$user_agent" -H "$capabilities" sv922-mwp11.eq.i.fetchtv.com.au:12121/v4/search --data "words=war&scope=All&count=100"
 
-}
+# }
 
 
 
@@ -159,10 +152,21 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 #export PS1="$BCyan\u $cyan\W$reset $ "
 export PS1="$BCyan\u$gray\$(short_prompt)$cyan\W $ $reset"
 
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
+
 export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
 export PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
 
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+ulimit -n 4096
+cd ~
+export PYENV_VERSION="system"

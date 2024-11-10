@@ -1,55 +1,7 @@
-set number " show line numbers
-set clipboard=unnamedplus
-set incsearch
-set diffopt+=vertical " Show diffs side by side
-set nowrap
+" -----------------------------------------------------------------------------
+" Vundle
+" -----------------------------------------------------------------------------
 
-set encoding=utf-8
-
-" clipboard
-autocmd VimLeave * call system("echo -n $'" . escape(getreg(), "'") . "' | xsel -ib")
-
-" syntax highlighting
-let python_highlight_all=1
-syntax on
-
-"for a misbehaved Backspace key from an external keyboard. Doesn't quite fix the problem though.
-nnoremap <BS> <Left><Del>
-inoremap <BS> <Left><Del>
-set backspace=indent,eol,start
-
-"Show a tree to navigate and open files
-set wildmenu
-
-" specify where the split should happen
-set splitright
-
-" adds PEP 8 indentation
-au BufNewFile,BufRead *.py
-    \ set tabstop=4 |
-    \ set softtabstop=4 |
-    \ set shiftwidth=4 |
-    \ set textwidth=79 |
-    \ set expandtab |
-    \ set autoindent |
-    \ set fileformat=unix
-
-" YouCompleteMe customizations
-let g:ycm_autoclose_preview_window_after_completion=1
-map <leager>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
-
-" python with virtualenv support. Adds support to virtualenv
-py3 << EOF
-import os
-import sys
-if 'VIRTUAL_ENV' in os.environ:
-  project_base_dir = os.environ['VIRTUAL_ENV']
-  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-  execfile(activate_this, dict(__file__=activate_this))
-EOF
-
-
-" setting up vundle
 set nocompatible              " required
 filetype off                  " required
 
@@ -67,59 +19,176 @@ Plugin 'gmarik/Vundle.vim'
 " used Bundle instead of Plugin)
 
 " ...
-Plugin 'vim-scripts/indentpython.vim'
+Plugin 'tpope/vim-commentary'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'jnurmine/Zenburn'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'scrooloose/nerdtree'
+
 Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-Plugin 'sainnhe/gruvbox-material'
-Plugin 'sheerun/vim-polyglot'
-Plugin 'sainnhe/edge'
+" Plugin 'vim-airline/vim-airline'
+" Plugin 'vim-airline/vim-airline-themes'
+
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'tomtom/tlib_vim'
+Plugin 'garbas/vim-snipmate'
+Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plugin 'junegunn/fzf.vim'
+
+Plugin 'christoomey/vim-tmux-navigator'
+
+Plugin 'psf/black'
+
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" NERDTree configs
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
-nnoremap <Leader>f :NERDTreeToggle<Enter>
+set nocompatible              " required
+filetype on                  " required
 
-" Powerline configs
-set laststatus=2 " always display powerline
+" -----------------------------------------------------------------------------
 
-" colorscheme
+" add fzf to vim
+run with :FZZ, or just :F<tab>
+set rtp+=/usr/local/opt/fzf
+
+" fzf
+" Use ag to obey ignore files
+let $FZF_DEFAULT_COMMAND='ag --ignore "*tags*" --ignore "*.log" --ignore ".git" --hidden -g ""'
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-s': 'vsplit' }
+
+" general configs
+set number " show line numbers
+syntax on 
+set clipboard=unnamed " access system clipboard
+if &diff
+    set diffopt-=internal
+    set diffopt+=vertical
+endif
+"set diffopt+=vertical
+set nowrap
+set encoding=utf-8
+set mouse=a                        " Enable mouse everywhere. 
+set redrawtime=10000
+let mapleader=","
+set shiftwidth=4
+
+" python syntax highlighting
+let python_highlight_all=1
+
+" enable airline symbols
+let g:airline_powerline_fonts = 1
+
+"for a misbehaved Backspace key from an external keyboard. Doesn't quite fix the problem though.
+nnoremap <BS> <Left><Del>
+inoremap <BS> <Left><Del>
+set backspace=indent,eol,start
+
+"Show a tree to navigate and open files
+set wildmenu
+set wildmode=longest:list,full
+
+" specify where the split should happen
+set splitright
+nmap <leader>d :bprevious<CR>:bdelete #<CR> " delete current buffer without closing the window
+
+" panes navigation
+if !has('nvim')
+    set ttymouse=xterm2    " enable draggin splits in tmux
+endif
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+
+let g:tmux_navigator_no_mappings = 1
+nnoremap <silent> <c-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
+"nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
+"nnoremap <silent> <c-h> :TmuxNavigatePrevious<cr>
+
+
+" scrolling
+nnoremap <C-e> 3<C-e>
+nnoremap <C-y> 3<C-y>
+" Scroll 3 characters to the right
+nnoremap zl 4zl 
+" Scroll 3 characters to the left
+nnoremap zh 4zh 
+
+" search settings
+set incsearch
+set hlsearch
+nmap <silent> ,/ :nohlsearch<CR> " clears the highlight search
+
+" set nowrapscan " the problem is if the result of the search is above the cursor it does not find it
+" search for visually selected text
+vnoremap // y/\V<C-r>=escape(@",'/\')<CR><CR> 
+
+" cursor configs | For tmux running in iTerm2 on OS X
+let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
+let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+
+" Adds PEP 8 indentation
+"    \ set textwidth=79 |
+" au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%80v.\+', -1)
+" just overflowin characters
+    " \ set colorcolumn=79
+au BufNewFile,BufRead *.py
+    \ set tabstop=4 |
+    \ set softtabstop =4 |
+    \ set shiftwidth=4 |
+    \ set expandtab |
+    \ set autoindent |
+    \ set autoindent |
+    \ set smarttab |
+    \ set colorcolumn=79
+
+autocmd Filetype yaml set expandtab
+autocmd Filetype yaml set shiftwidth=2
+
+"remap ESC
+inoremap jj <ESC>
+
+" colorscheme and to counter tmux color settings
+set t_Co=256 " ALL OTHER COLOR SETTINGS SHOULD BE SET AFTER THIS SETTING
 colorscheme edge
 set background=dark
 
-filetype indent on
-" netrw
-"let g:netrw_liststyle = 3 " tree view for directory browser
-"let g:netrw_browse_split = 4 " open in previous window
-"let g:netrw_winsize = 20 " width of the directory finder
-"let g:netrw_altv = 1 " contrl left/right something
-"let g:netrw_fastbrowse = 0 " get rid of pesky bug that doesnt allow you to close buffers
-"augroup ProjectDrawer
-"    autocmd!
-"    autocmd VimEnter * :Vexplore
-"augroup END
-set whichwrap+=<,>,h,l
+" NERDTree configs
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+let NERDTreeIgnore = ['\.pyc$']
+nnoremap <Leader>f :NERDTreeToggle<Enter>
+highlight Directory ctermfg=cyan
 
+" YouCompleteMe customs
+" let g:ycm_autoclose_preview_window_after_completion=1
+" map <leader>g :YcmCompleter GoToDefinitionsElseDeclaration<CR>
 
-set expandtab
+" PowerLine configs
+set laststatus=2 " causes the status line to always show up. Normally it is hidden when there's only one split
 
-" Be smart when using tabs ;)
-set smarttab
+" UNDO log
 
-" 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
+" tell it to use an undo file
+set undofile
+" set a directory to store the undo history
+set undodir=/Users/carlos/.vimundo
 
-" Linebreak on 500 characters
-set lbr
-set tw=500
+" vimdiff
 
-set ai "Auto indent
-set si "Smart indent
-set wrap "Wrap lines
+" yanking
+nmap <leader>y <S-^>v<S-$>hy
+
+" folding
+" set foldmethod=indent
+" nnoremap <space> za
+" vnoremap <space> zf
+let g:ycm_clangd_binary_path = trim(system('brew --prefix llvm')).'/bin/clangd'
